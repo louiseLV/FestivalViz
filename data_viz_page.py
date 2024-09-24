@@ -117,7 +117,9 @@ def show():
 
     df_discipline = df_clean[df_clean['discipline_dominante'] == discipline_choice]
 
-    df_discipline = df_discipline.dropna(subset=['annee_de_creation_du_festival', 'latitude', 'longitude'])
+    df_discipline['latitude'] = df_clean['geocodage_xy'].str.split(',').str[0].astype(float)
+    df_discipline['longitude'] = df_clean['geocodage_xy'].str.split(',').str[1].astype(float)
+    df_discipline = df_discipline.dropna(subset=['latitude', 'longitude'])   
 
     if not df_discipline.empty:
 
