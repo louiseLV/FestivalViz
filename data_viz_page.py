@@ -232,22 +232,5 @@ def show():
     plt.xticks(rotation=90)
     st.pyplot(plt)
 
-    # Plotly - Map visualization of festivals
-    st.write("Distribution des festivals selon l\'année de création")
 
-    df_clean = df.dropna(subset=['annee_de_creation_du_festival'])
-    df_clean['annee_de_creation_du_festival'] = pd.to_numeric(df_clean['annee_de_creation_du_festival'], errors='coerce')
-
-    # Filtrer les années entre 1960 et 2024
-    df_clean = df_clean[(df_clean['annee_de_creation_du_festival'] >= 1960) & (df_clean['annee_de_creation_du_festival'] <= 2024)]
-
-    fig = px.histogram(df_clean, 
-                    x='annee_de_creation_du_festival', 
-                    nbins=13,  
-                    labels={'annee_de_creation_du_festival': 'Année de création du festival'}
-                    )
-
-    fig.update_xaxes(dtick=5, tickangle=45)
-
-    st.plotly_chart(fig)
     
