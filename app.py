@@ -11,9 +11,7 @@ st.set_page_config(page_title="FestivalViz", layout="wide")
 # Barre latérale avec photo et description
 with st.sidebar:
     # Chargement de l'image avec st.image(), sans légende
-    print(os.path.exists("moi.jpg"))
-
-
+    st.image("moi.jpg", width=200)
     st.write("""
     ## Louise LAVERGNE 🌼
     Hello ! Je suis Louise, passionnée par les données et les analyses 📊. Ravi de vous rencontrer ! 👋
