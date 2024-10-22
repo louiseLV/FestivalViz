@@ -1,5 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 
 def show():
     st.title("Mon portfolio 📚")
@@ -25,6 +24,8 @@ def show():
     st.subheader("Répartition des Compétences 📊")
     competencies = ['Analyse de données', 'Machine Learning', 'Communication', 'Travail en équipe', 'Programmation']
     levels = [4, 3, 4, 5, 3]  
+    
+    import matplotlib.pyplot as plt
 
     plt.figure(figsize=(8, 4))
     plt.barh(competencies, levels, color='skyblue')
