@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.express as px
-import folium
-from streamlit_folium import folium_static
-from folium.plugins import HeatMap
 
 def show():
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import plotly.express as px
+    import folium
+    from streamlit_folium import folium_static
+    from folium.plugins import HeatMap
+
     st.title("Visualisation de données")
     df = pd.read_csv("festivals_dataset.csv", delimiter=";")
     df.dropna(thresh=len(df.columns) - 20, inplace=True)
