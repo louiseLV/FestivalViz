@@ -68,16 +68,14 @@ def show():
     df_filtered['latitude'] = df_clean['geocodage_xy'].str.split(',').str[0].astype(float)
     df_filtered['longitude'] = df_clean['geocodage_xy'].str.split(',').str[1].astype(float)
     df_filtered = df_filtered.dropna(subset=['latitude', 'longitude'])   
-   # Vérifiez si les colonnes latitude et longitude existent
     
     if not df_filtered.empty:
         m = folium.Map(location=[46.603354, 1.888334], zoom_start=5, tiles='CartoDB positron')
 
-        # Préparer les données pour la HeatMap
         heat_data = [[row['latitude'], row['longitude']] for index, row in df_filtered.iterrows()]
 
-        # Ajouter la HeatMap
-        HeatMap(heat_data, radius=15).add_to(m)  # Ajustez le rayon selon vos besoins
+
+        HeatMap(heat_data, radius=15).add_to(m) 
 
         st.write(f"Festivals jusqu'à l'année : {year_slider}")
         folium_static(m)
@@ -86,7 +84,6 @@ def show():
         festivals_per_city = df_filtered['commune_principale_de_deroulement'].value_counts().reset_index()
         festivals_per_city.columns = ['Ville', 'Nombre de Festivals']
 
-        # Création du graphique à barres
         fig = px.bar(
             festivals_per_city,
             x='Ville',
@@ -106,7 +103,7 @@ def show():
     st.title("Répartition des disciplines dominantes")
     fig, ax = plt.subplots()
     df['discipline_dominante'].value_counts().plot(kind='pie', autopct='%1.1f%%', ax=ax)
-    plt.ylabel('')  # Pour retirer le label de l'axe Y dans un pie chart
+    plt.ylabel('') 
     plt.tight_layout()
     plt.show()
     st.pyplot(plt)
@@ -154,7 +151,7 @@ def show():
                 size='annee_de_creation_du_festival',
                 size_max=5,
                 hover_name='nom_du_festival',
-                hover_data={'latitude': False, 'longitude': False},  # Ne pas afficher latitude et longitude
+                hover_data={'latitude': False, 'longitude': False},  
                 mapbox_style="carto-positron",
                 title=f"Répartition géographique des festivals - {discipline_choice}"
             )
@@ -163,13 +160,11 @@ def show():
 
     # Folium - Choropleth map of festivals by region
 
-    # Créer un GeoDataFrame de la France par région
             
     st.title("Répartition des festivals par région avec Folium")
     region_counts = df_clean['region_principale_de_deroulement'].value_counts().reset_index()
     region_counts.columns = ['region', 'nombre_de_festivals']
 
-    # Utiliser une carte GeoJSON pour les régions de France
     geojson_url = "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson"
 
     m = folium.Map(location=[46.603354, 1.888334], zoom_start=5, tiles='CartoDB positron')
@@ -189,7 +184,6 @@ def show():
 
     folium_static(m)
 
-    # Plotly - Choropleth map of festivals by region
     st.title("Répartition des festivals par région avec Plotly")
     region_counts = df_clean['region_principale_de_deroulement'].value_counts().reset_index()
     region_counts.columns = ['region_principale_de_deroulement', 'nombre_de_festivals']
@@ -201,15 +195,15 @@ def show():
         region_counts,
         geojson=geojson_url,
         locations='region_principale_de_deroulement',
-        featureidkey="properties.nom",  # Associe les noms des régions dans le GeoJSON
+        featureidkey="properties.nom",  
         color='nombre_de_festivals',
-        color_continuous_scale="Blues",  # La couleur plus foncée indique plus de festivals
+        color_continuous_scale="Blues",  
         hover_name='region_principale_de_deroulement',
         labels={'nombre_de_festivals': 'Nombre de festivals'},
         title="Nombre de festivals par région en France"
     )
 
-    fig.update_geos(fitbounds="locations", visible=False)  # Ajuste le zoom de la carte
+    fig.update_geos(fitbounds="locations", visible=False)  
     fig.update_layout(
         geo=dict(
             showframe=False,
@@ -221,13 +215,19 @@ def show():
         )
     )
     st.plotly_chart(fig)
-    # Seaborn - Number of festivals per region
 
-    st.title("Nombre de festivals par région ")
+    st.title("Nombre de festivals par région")
+
+    
+    region_order = df_clean['region_principale_de_deroulement'].value_counts(ascending=False).index
+
     plt.figure(figsize=(10, 6))
-    sns.countplot(data=df, x='region_principale_de_deroulement', palette='coolwarm', 
-                  order=df['region_principale_de_deroulement'].value_counts().index)
+    sns.countplot(data=df_clean, x='region_principale_de_deroulement', palette='coolwarm', 
+                order=region_order)
     plt.xticks(rotation=90)
+    plt.title("Répartition des festivals par région")
+    plt.xlabel("Région")
+    plt.ylabel("Nombre de festivals")
     st.pyplot(plt)
 
     from folium import plugins
@@ -248,11 +248,11 @@ def show():
         else:
             return 'Inconnue'
 
-    # Nettoyage des données
     df_clean['type_periode'] = df_clean['periode_principale_de_deroulement_du_festival'].apply(normalize_period)
     df_clean['latitude'] = df_clean['geocodage_xy'].str.split(',').str[0].astype(float)
     df_clean['longitude'] = df_clean['geocodage_xy'].str.split(',').str[1].astype(float)
     df_clean = df_clean.dropna(subset=['latitude', 'longitude'])
+
     # Répartition des festivals par saison (graphe)
     st.title("Répartition des festivals par saison :")
         
@@ -267,12 +267,10 @@ def show():
 
      
     st.pyplot(fig)
-    # Interface utilisateur
     st.title("Carte des festivals par saison")
     selected_season = st.selectbox("Choisissez la saison à afficher :", ['Avant-saison', 'Saison', 'Après-saison'])
     df_filtered = df_clean[df_clean['type_periode'] == selected_season]
 
-    # Affichage de la carte
     if not df_filtered.empty:
         map_center = [df_filtered['latitude'].mean(), df_filtered['longitude'].mean()]
         m = folium.Map(location=map_center, zoom_start=6)
@@ -287,20 +285,16 @@ def show():
         st.title(f"Carte des festivals durant la {selected_season}.")
         st_folium(m, width=725, height=500)
 
-            # Répartition des festivals par ville pour la saison sélectionnée
         st.title(f"Répartition des festivals par ville pour la {selected_season} :")
 
-        # Compter les festivals par ville pour la saison sélectionnée
         city_count = df_filtered['commune_principale_de_deroulement'].value_counts().head(10)
 
-        # Création du graphique des villes
         fig, ax = plt.subplots()
         ax.barh(city_count.index, city_count.values, color='skyblue')
         ax.set_xlabel('Nombre de festivals')
         ax.set_ylabel('Ville')
         ax.set_title(f'Villes avec le plus de festivals durant la {selected_season}')
 
-        # Affichage du graphique dans Streamlit
         st.pyplot(fig)
 
     else:
